@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kolmogorov Complexity and Music</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = { tex: { inlineMath: [['\\(', '\\)']] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js" defer></script>
+<style>
+  :root {
+    --paper: #eef1f4;
+    --ink: #17222e;
+    --muted: #55626f;
+    --rule: #c7cfd8;
+    --accent: #2c5f8a;
+    --strip: #dfe5eb;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #141a21;
+      --ink: #e3e8ee;
+      --muted: #97a3b0;
+      --rule: #2e3944;
+      --accent: #8fb8de;
+      --strip: #1c242d;
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Newsreader", Georgia, "Times New Roman", serif;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    padding: env(safe-area-inset-top, 0px) 1.25rem env(safe-area-inset-bottom, 0px);
+  }
+  main { max-width: 42rem; margin: 0 auto; padding: 4rem 0 5rem; }
+  h1 {
+    font-weight: 600;
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin: 0 0 0.75rem;
+  }
+  .byline { color: var(--muted); margin: 0 0 2.5rem; }
+
+  /* Hero: two strings of equal length, very different descriptions */
+  .strings {
+    font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 0.82rem;
+    background: var(--strip);
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    margin: 0 0 1rem;
+  }
+  .strings div { white-space: nowrap; }
+  .strings .desc { color: var(--muted); margin: 0.15rem 0 0.9rem; }
+  .strings .desc:last-child { margin-bottom: 0; }
+  .lede { margin: 0 0 3rem; }
+
+  h2 {
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin: 0 0 1.25rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+  }
+  ol.outline { list-style: none; counter-reset: sec; padding: 0; margin: 0; }
+  ol.outline > li {
+    counter-increment: sec;
+    position: relative;
+    padding-left: 2.6rem;
+    margin-bottom: 1.75rem;
+  }
+  ol.outline > li::before {
+    content: counter(sec);
+    position: absolute;
+    left: 0;
+    top: 0.05rem;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--accent);
+    font-style: italic;
+  }
+  ol.outline h3 { font-size: 1.2rem; font-weight: 600; margin: 0 0 0.3rem; }
+  ol.outline p { margin: 0; }
+  .main-thm { color: var(--accent); font-style: italic; font-weight: 400; font-size: 1rem; }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  footer { color: var(--muted); font-size: 0.95rem; margin-top: 3rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Kolmogorov Complexity and Music</h1>
+  <p class="byline">A 15-455 project by [Your Name]</p>
+
+  <div class="strings" aria-label="Two 64-bit strings">
+    <div>0101010101010101010101010101010101010101010101010101010101010101</div>
+    <div class="desc">print "01" 32 times</div>
+    <div>1101000110111010010110001110101100100111010001011110010110100011</div>
+    <div class="desc">print "1101000110111010…" (no shorter description known)</div>
+  </div>
+  <p class="lede">Both strings are 64 bits long, yet the first has a short description and the second, as far as anyone can tell, does not. Kolmogorov complexity makes this idea precise: the complexity of a string is the length of the shortest program that outputs it. This site develops the theory, shows why it can never be computed exactly, and then uses real compressors as a stand-in to measure how similar pieces of music are.</p>
+
+  <h2>Outline</h2>
+  <ol class="outline">
+    <li>
+      <h3>Introduction to Kolmogorov complexity</h3>
+      <p>Motivation from the example above, then the formal definition \(K_U(x) = \min\{|p| : U(p) = x\}\) for a fixed Turing machine \(U\). Simple bounds such as \(K(x) \le |x| + O(1)\), plus conditional complexity \(K(x \mid y)\), which later sections rely on.</p>
+    </li>
+    <li>
+      <h3>The invariance theorem <span class="main-thm">(main theorem)</span></h3>
+      <p>Statement and full proof that for any two universal machines \(U, V\) there is a constant \(c\) with \(|K_U(x) - K_V(x)| \le c\) for all \(x\). Discussion of why this makes \(K\) a meaningful property of the string rather than of the programming language.</p>
+    </li>
+    <li>
+      <h3>Incompressible strings</h3>
+      <p>A counting argument shows that for every \(n\), at least one string of length \(n\) has \(K(x) \ge n\), and most strings are nearly incompressible. This gives a definition of what it means for a single string to be random.</p>
+    </li>
+    <li>
+      <h3>Uncomputability and the halting problem</h3>
+      <p>Proof that \(K\) is not computable, via a Berry-paradox argument and via a reduction connecting it to the halting problem. Also covers what we can do: \(K\) can be approximated from above, but we never know when we are done.</p>
+    </li>
+    <li>
+      <h3>Chaitin’s incompleteness theorem</h3>
+      <p>Any consistent, sound formal system with a computable set of axioms can prove \(K(x) > L\) for only finitely many \(x\), even though almost all strings satisfy it. Proof, and its relationship to Gödel’s incompleteness theorem.</p>
+    </li>
+    <li>
+      <h3>From theory to practice: compression distance</h3>
+      <p>Information distance and the normalized compression distance (NCD), which replaces the uncomputable \(K\) with the output length of a real compressor such as gzip or bzip2. What is lost in the approximation and why it still works surprisingly well.</p>
+    </li>
+    <li>
+      <h3>Application: clustering music</h3>
+      <p>How Cilibrasi, Vitányi and de Wolf used NCD on MIDI files to group pieces by composer and genre with no musical knowledge built in. Walkthrough of their method, results, and limitations, with a small worked example.</p>
+    </li>
+    <li>
+      <h3>References</h3>
+      <p>Textbooks, lecture notes and papers used to build this site.</p>
+    </li>
+  </ol>
+
+  <footer>Site under construction. Sections will be filled in over the coming weeks.</footer>
+</main>
+</body>
+</html>
