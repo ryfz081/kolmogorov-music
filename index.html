@@ -8,7 +8,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
-  window.MathJax = { tex: { inlineMath: [['\\(', '\\)']] } };
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    }
+  };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js" defer></script>
 <style>
@@ -53,7 +58,6 @@
   }
   .byline { color: var(--muted); margin: 0 0 2.5rem; }
 
-  /* Hero: two strings of equal length, very different descriptions */
   .strings {
     font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
     font-size: 0.82rem;
@@ -93,8 +97,10 @@
     font-style: italic;
   }
   ol.outline h3 { font-size: 1.2rem; font-weight: 600; margin: 0 0 0.3rem; }
-  ol.outline p { margin: 0; }
-  .main-thm { color: var(--accent); font-style: italic; font-weight: 400; font-size: 1rem; }
+  ol.outline p { margin: 0 0 0.6rem; }
+  ol.outline p:last-child { margin-bottom: 0; }
+  .note { color: var(--muted); font-style: italic; font-weight: 400; font-size: 1rem; }
+  .math-block { overflow-x: auto; }
   a { color: var(--accent); }
   a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   footer { color: var(--muted); font-size: 0.95rem; margin-top: 3rem; }
@@ -103,49 +109,60 @@
 <body>
 <main>
   <h1>Kolmogorov Complexity and Music</h1>
-  <p class="byline">15-455 project</p>
+  <p class="byline">A 15-455 project by [Your Name]</p>
 
-  <div class="strings" aria-label="Two 64-bit strings">
+  <div class="strings" aria-label="Two binary strings and two melodies">
     <div>0101010101010101010101010101010101010101010101010101010101010101</div>
     <div class="desc">print "01" 32 times</div>
     <div>1101000110111010010110001110101100100111010001011110010110100011</div>
     <div class="desc">print "1101000110111010…" (no shorter description known)</div>
+    <div>C D E F G A B C  C D E F G A B C  C D E F G A B C</div>
+    <div class="desc">play the C major scale 3 times</div>
+    <div>E A♭ C D F♯ B E♭ G A C♯ F B♭ D A♭ E G C F♯ B D E♭ A</div>
+    <div class="desc">play every note as written</div>
   </div>
-  <p class="lede">Both strings are 64 bits long, yet the first has a short description and the second, as far as anyone can tell, does not. Kolmogorov complexity formalizes this idea where the complexity of a string is the length of the shortest program that outputs it. We will dive into the theorems and the applications of these findings specifically to music.</p>
+  <p class="lede">Which of these is simpler to describe? Kolmogorov complexity makes the question precise: the complexity of a string is the length of the shortest program that outputs it. This site develops the theory, shows why it can never be computed exactly, and then uses compression as a stand-in to cluster and classify music.</p>
 
   <h2>Outline</h2>
   <ol class="outline">
     <li>
       <h3>Introduction to Kolmogorov complexity</h3>
-      <p>Motivation from the example above, then the formal definition \(K_U(x) = \min\{|p| : U(p) = x\}\) for a fixed Turing machine \(U\). Simple bounds such as \(K(x) \le |x| + O(1)\), plus conditional complexity \(K(x \mid y)\), which later sections rely on.</p>
+      <p>Opens with two binary strings of the same length, one patterned ($0101\ldots01$) and one random-looking, alongside two short melodies: a repeated scale and an unpredictable line. Asks which is simpler to describe. Gives the formal definition $K_U(x) = \min\{|p| : U(p) = x\}$ for a fixed universal Turing machine $U$. Covers the bounds $K(x) \le |x| + c$ and $K(0^n) \le \log n + c$, and shows how structure in a string turns into a short program.</p>
     </li>
     <li>
-      <h3>The invariance theorem <span class="main-thm">(main theorem)</span></h3>
-      <p>Statement and full proof that for any two universal machines \(U, V\) there is a constant \(c\) with \(|K_U(x) - K_V(x)| \le c\) for all \(x\). Discussion of why this makes \(K\) a meaningful property of the string rather than of the programming language.</p>
+      <h3>The invariance theorem <span class="note">(main theorem)</span></h3>
+      <p>States and proves that for any two universal Turing machines $U$ and $V$, there is a constant $c$ such that $|K_U(x) - K_V(x)| \le c$ for every string $x$. Explains why this means Kolmogorov complexity measures the string itself rather than the choice of programming language.</p>
     </li>
     <li>
       <h3>Incompressible strings</h3>
-      <p>A counting argument shows that for every \(n\), at least one string of length \(n\) has \(K(x) \ge n\), and most strings are nearly incompressible. This gives a definition of what it means for a single string to be random.</p>
+      <p>Uses a counting argument to show that for every $n$, at least one string of length $n$ has $K(x) \ge n$, and that most strings are nearly incompressible. This gives a definition of what it means for a single string to be random.</p>
     </li>
     <li>
       <h3>Uncomputability and the halting problem</h3>
-      <p>Proof that \(K\) is not computable, via a Berry-paradox argument and via a reduction connecting it to the halting problem. Also covers what we can do: \(K\) can be approximated from above, but we never know when we are done.</p>
+      <p>Proves that $K$ is not computable, using a Berry-paradox argument and a connection to the halting problem. Also explains that $K$ can be approximated from above, but we can never know when the approximation has reached the true value.</p>
     </li>
     <li>
       <h3>Chaitin’s incompleteness theorem</h3>
-      <p>Any consistent, sound formal system with a computable set of axioms can prove \(K(x) > L\) for only finitely many \(x\), even though almost all strings satisfy it. Proof, and its relationship to Gödel’s incompleteness theorem.</p>
+      <p>Shows that any consistent, sound formal system with a computable set of axioms can prove statements of the form $K(x) &gt; L$ for only finitely many strings $x$, even though almost all strings satisfy them. Includes the proof and its relationship to Gödel’s incompleteness theorem.</p>
     </li>
     <li>
       <h3>From theory to practice: compression distance</h3>
-      <p>Information distance and the normalized compression distance (NCD), which replaces the uncomputable \(K\) with the output length of a real compressor such as gzip or bzip2. What is lost in the approximation and why it still works surprisingly well.</p>
+      <p>Introduces information distance and the normalized compression distance</p>
+      <div class="math-block">$$\mathrm{NCD}(x, y) = \frac{C(xy) - \min\{C(x), C(y)\}}{\max\{C(x), C(y)\}}$$</div>
+      <p>where $C$ is the output length of a real compressor such as gzip or bzip2, used in place of the uncomputable $K$. Discusses what is lost in this approximation and why it still works well in practice.</p>
     </li>
     <li>
-      <h3>Application: clustering music</h3>
-      <p>How Cilibrasi, Vitányi and de Wolf used NCD on MIDI files to group pieces by composer and genre with no musical knowledge built in. Walkthrough of their method, results, and limitations, with a small worked example.</p>
+      <h3>Application: clustering music <span class="note">(Cilibrasi, Vitányi, de Wolf)</span></h3>
+      <p>Unsupervised setting: compute pairwise NCD between MIDI files using bzip2, then build a tree with the quartet method. Walks through how pieces group by genre (rock, jazz, classical) and by composer without any built-in musical knowledge. Covers limitations: dependence on file encoding, the compressor’s limited view of musical structure, and the difficulty of evaluating tree quality.</p>
+    </li>
+    <li>
+      <h3>Application: classifying melodies <span class="note">(Li and Sleep)</span></h3>
+      <p>Supervised setting: assign melodies to one of four classes with a 1-nearest-neighbour classifier, using NID estimated by LZ phrase counts. Discusses the representation choice: absolute pitch contours versus interval contours, and why intervals did better.</p>
+      <p>Worked example: encode a short melody and its transposition as interval sequences ($+2, +2, +1, \ldots$), show the two sequences are identical, and compute that their distance is near zero while the absolute-pitch versions look different. Closes by comparing the two papers: clustering versus classification, off-the-shelf compressor versus LZ estimator, and raw MIDI versus extracted melody.</p>
     </li>
     <li>
       <h3>References</h3>
-      <p>Textbooks, lecture notes and papers used to build this site.</p>
+      <p>Textbooks, lecture notes, and papers used to build this site.</p>
     </li>
   </ol>
 
